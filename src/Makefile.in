@@ -46,9 +46,13 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_yane_OBJECTS = yane-yane.$(OBJEXT)
+am_yane_OBJECTS = yane-yane.$(OBJEXT) yane-video.$(OBJEXT)
 yane_OBJECTS = $(am_yane_OBJECTS)
-yane_DEPENDENCIES = cpu/lib6502.a common/libyane.a
+am__DEPENDENCIES_1 =
+yane_DEPENDENCIES = cpu/lib6502.a common/libyane.a \
+	$(am__DEPENDENCIES_1)
+yane_LINK = $(CCLD) $(yane_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/buildaux/depcomp
 am__depfiles_maybe = depfiles
@@ -141,6 +145,8 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+SDL_CFLAGS = @SDL_CFLAGS@
+SDL_LDADD = @SDL_LDADD@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -188,9 +194,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = common cpu
-yane_SOURCES = yane.c yane.h
+yane_SOURCES = yane.c yane.h video.c
+yane_CFLAGS = -Wall $(SDL_CFLAGS)
 yane_CPPFLAGS = -I./common -I./cpu
-yane_LDADD = cpu/lib6502.a common/libyane.a
+yane_LDADD = cpu/lib6502.a common/libyane.a $(SDL_LDADD)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -282,7 +289,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 yane$(EXEEXT): $(yane_OBJECTS) $(yane_DEPENDENCIES) 
 	@rm -f yane$(EXEEXT)
-	$(LINK) $(yane_OBJECTS) $(yane_LDADD) $(LIBS)
+	$(yane_LINK) $(yane_OBJECTS) $(yane_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -290,6 +297,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yane-video.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yane-yane.Po@am__quote@
 
 .c.o:
@@ -307,18 +315,32 @@ distclean-compile:
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 yane-yane.o: yane.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT yane-yane.o -MD -MP -MF $(DEPDIR)/yane-yane.Tpo -c -o yane-yane.o `test -f 'yane.c' || echo '$(srcdir)/'`yane.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -MT yane-yane.o -MD -MP -MF $(DEPDIR)/yane-yane.Tpo -c -o yane-yane.o `test -f 'yane.c' || echo '$(srcdir)/'`yane.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/yane-yane.Tpo $(DEPDIR)/yane-yane.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yane.c' object='yane-yane.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o yane-yane.o `test -f 'yane.c' || echo '$(srcdir)/'`yane.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -c -o yane-yane.o `test -f 'yane.c' || echo '$(srcdir)/'`yane.c
 
 yane-yane.obj: yane.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT yane-yane.obj -MD -MP -MF $(DEPDIR)/yane-yane.Tpo -c -o yane-yane.obj `if test -f 'yane.c'; then $(CYGPATH_W) 'yane.c'; else $(CYGPATH_W) '$(srcdir)/yane.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -MT yane-yane.obj -MD -MP -MF $(DEPDIR)/yane-yane.Tpo -c -o yane-yane.obj `if test -f 'yane.c'; then $(CYGPATH_W) 'yane.c'; else $(CYGPATH_W) '$(srcdir)/yane.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/yane-yane.Tpo $(DEPDIR)/yane-yane.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yane.c' object='yane-yane.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o yane-yane.obj `if test -f 'yane.c'; then $(CYGPATH_W) 'yane.c'; else $(CYGPATH_W) '$(srcdir)/yane.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -c -o yane-yane.obj `if test -f 'yane.c'; then $(CYGPATH_W) 'yane.c'; else $(CYGPATH_W) '$(srcdir)/yane.c'; fi`
+
+yane-video.o: video.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -MT yane-video.o -MD -MP -MF $(DEPDIR)/yane-video.Tpo -c -o yane-video.o `test -f 'video.c' || echo '$(srcdir)/'`video.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/yane-video.Tpo $(DEPDIR)/yane-video.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='video.c' object='yane-video.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -c -o yane-video.o `test -f 'video.c' || echo '$(srcdir)/'`video.c
+
+yane-video.obj: video.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -MT yane-video.obj -MD -MP -MF $(DEPDIR)/yane-video.Tpo -c -o yane-video.obj `if test -f 'video.c'; then $(CYGPATH_W) 'video.c'; else $(CYGPATH_W) '$(srcdir)/video.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/yane-video.Tpo $(DEPDIR)/yane-video.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='video.c' object='yane-video.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(yane_CPPFLAGS) $(CPPFLAGS) $(yane_CFLAGS) $(CFLAGS) -c -o yane-video.obj `if test -f 'video.c'; then $(CYGPATH_W) 'video.c'; else $(CYGPATH_W) '$(srcdir)/video.c'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

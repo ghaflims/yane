@@ -598,6 +598,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+SDL_LDADD
+SDL_CFLAGS
 EGREP
 GREP
 CPP
@@ -4138,6 +4140,11 @@ _ACEOF
 fi
 
 done
+
+
+SDL_CFLAGS=`sdl-config --cflags`
+SDL_LDADD=`sdl-config --libs`
+
 
 
 ac_config_files="$ac_config_files Makefile img/Makefile src/Makefile src/common/Makefile src/cpu/Makefile"

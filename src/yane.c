@@ -25,13 +25,23 @@
 const char *compiled_str = "compiled on " __DATE__ " at " __TIME__ ".";
 const char *shortopts = "hv";
 char *progname;
+char *filename;
 
 yane_bool flag_verbose = FALSE;
+yane_bool flag_fullscreen = FALSE;
+
+int width = VIDEO_DEFAULT_WIDTH;
+int height = VIDEO_DEFAULT_HEIGHT;
+int bpp = VIDEO_DEFAULT_BPP;
 
 void
 yane_usage()
 {
 	fprintf(stderr, "Usage: %s [options] file\n", progname);
+	fprintf(stderr, "Options:\n"
+		"   -h      Display this message\n"
+		"   -v      Print extra information to stdout\n"
+	);
 	fprintf(stderr, "\n%s %s\n", PACKAGE_STRING, compiled_str);
 }
 
@@ -64,6 +74,15 @@ main(int argc, char **argv)
 		}
 	}
 	
+	if(optind >= argc)
+	{
+		fprintf(stderr, "%s: no input file\n", progname);
+		yane_usage();
+		return -1;
+	}
+	
+	filename = argv[optind];
+	
 	if(yane_mem_init() < 0)
 	{
 		yane_error("failed to initialize memory");
@@ -75,6 +94,27 @@ main(int argc, char **argv)
 		yane_error("failed to initialize CPU");
 		return -1;
 	}
+	
+	if(yane_video_init(width, height, bpp, flag_fullscreen) < 0)
+	{
+		yane_error("failed to initialize video");
+		return -1;
+	}
+	
+	/* Main loop */
+	for(;;)
+	{
+		int rv;
+		
+		rv = yane_video_loop();
+		
+		if(rv == VIDEO_USER_QUIT)
+			break;
+	}
+	
+	
+	/* Deinitialization */
+	yane_video_deinit();
 
 	return 0;
 }

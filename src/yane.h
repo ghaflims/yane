@@ -5,6 +5,8 @@
 # include "config.h"
 #endif
 
+#include "yaneconf.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -31,8 +33,14 @@
 #endif
 #define TRUE 1
 
+#define VIDEO_USER_QUIT 1
+
 typedef char yane_bool;
 
 extern yane_bool flag_verbose;
+
+int yane_video_init(int width, int height, int bpp, yane_bool fullscreen);
+int yane_video_deinit();
+int yane_video_loop();
 
 #endif /* not __YANE_H__ */

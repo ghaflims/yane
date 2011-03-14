@@ -103,6 +103,8 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+SDL_CFLAGS = @SDL_CFLAGS@
+SDL_LDADD = @SDL_LDADD@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -151,7 +153,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libyane.a
 libyane_a_SOURCES = common.c common.h
-libyane_a_CFLAGS = -I../ -I../cpu
+libyane_a_CFLAGS = -Wall -I../ -I../cpu
 all: all-am
 
 .SUFFIXES:

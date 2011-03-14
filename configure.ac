@@ -13,6 +13,11 @@ AC_PROG_MAKE_SET
 
 AC_CHECK_HEADERS([getopt.h stdarg.h stdio.h stdlib.h unistd.h])
 
+SDL_CFLAGS=`sdl-config --cflags`
+SDL_LDADD=`sdl-config --libs`
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_LDADD)
+
 AC_CONFIG_FILES([Makefile img/Makefile src/Makefile src/common/Makefile src/cpu/Makefile])
 AC_CONFIG_HEADERS([src/config.h])
 AC_OUTPUT
