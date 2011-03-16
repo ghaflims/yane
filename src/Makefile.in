@@ -52,7 +52,7 @@ am_yane_OBJECTS = yane-yane.$(OBJEXT) yane-video.$(OBJEXT)
 yane_OBJECTS = $(am_yane_OBJECTS)
 am__DEPENDENCIES_1 =
 yane_DEPENDENCIES = nes/libnes.la common/libyanecommon.la \
-	$(am__DEPENDENCIES_1)
+	lib6502/lib6502.la $(am__DEPENDENCIES_1)
 yane_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(yane_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
@@ -225,11 +225,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = common nes
-yane_SOURCES = yane.c yane.h video.c
+SUBDIRS = common nes lib6502
+yane_SOURCES = yane.c yane.h yaneconf.h video.c
 yane_CFLAGS = -Wall $(SDL_CFLAGS)
-yane_CPPFLAGS = -I./common -I./nes
-yane_LDADD = nes/libnes.la common/libyanecommon.la $(SDL_LDADD)
+yane_CPPFLAGS = -I./common -I./nes -I./lib6502
+yane_LDADD = nes/libnes.la common/libyanecommon.la lib6502/lib6502.la $(SDL_LDADD)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

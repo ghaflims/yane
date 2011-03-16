@@ -23,16 +23,20 @@
 #include "yane.h"
 
 const char *compiled_str = "compiled on " __DATE__ " at " __TIME__ ".";
-const char *shortopts = "hv";
+const char *shortopts = "hvW:H:";
 char *progname;
 char *filename;
 
 yane_bool flag_verbose = FALSE;
 yane_bool flag_fullscreen = FALSE;
 
+/* Emulation is NTSC by default, unless detected otherwise
+   or forced by the user */
+yane_bool flag_PAL = FALSE;
+yane_bool flag_force_tv = FALSE;
+
 int width = VIDEO_DEFAULT_WIDTH;
 int height = VIDEO_DEFAULT_HEIGHT;
-int bpp = VIDEO_DEFAULT_BPP;
 
 void
 yane_usage()
@@ -41,6 +45,10 @@ yane_usage()
 	fprintf(stderr, "Options:\n"
 		"   -h      Display this message\n"
 		"   -v      Print extra information to stdout\n"
+		"   -W px   Width of the display screen in pixels\n"
+		"   -H px   Height of the display screen in pixels\n"
+		"   -P      Force the NES to be PAL.\n"
+		"   -N      Force the NES to be NTSC.\n"
 	);
 	fprintf(stderr, "\n%s %s\n", PACKAGE_STRING, compiled_str);
 }
@@ -63,6 +71,24 @@ main(int argc, char **argv)
 
 			case 'v':
 				flag_verbose = TRUE;
+				break;
+			
+			case 'W':
+				width = strtol(optarg, NULL, 10);
+				break;
+			
+			case 'H':
+				height = strtol(optarg, NULL, 10);
+				break;
+			
+			case 'P':
+				flag_PAL = TRUE;
+				flag_force_tv = TRUE;
+				break;
+			
+			case 'N':
+				flag_PAL = FALSE;
+				flag_force_tv = TRUE;
 				break;
 			
 			case -1:
@@ -95,7 +121,7 @@ main(int argc, char **argv)
 		return -1;
 	}
 	
-	if(yane_video_init(width, height, bpp, flag_fullscreen) < 0)
+	if(yane_video_init(width, height, flag_fullscreen) < 0)
 	{
 		yane_error("failed to initialize video");
 		return -1;

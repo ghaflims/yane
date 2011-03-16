@@ -29,12 +29,12 @@
 static SDL_Surface *screen = NULL;
 
 int
-yane_video_init(int width, int height, int bpp, yane_bool fullscreen)
+yane_video_init(int width, int height, yane_bool fullscreen)
 {
 	const SDL_VideoInfo *vi;
 	char namebuf[128];
 	SDL_PixelFormat *vfmt;
-	int flags;
+	int flags, bpp;
 	
 	if(screen != NULL)
 	{
@@ -45,7 +45,7 @@ yane_video_init(int width, int height, int bpp, yane_bool fullscreen)
 	/* Be pedantic about not calling SDL_Init if it already was */
 	if(!(SDL_WasInit(SDL_INIT_VIDEO) & SDL_INIT_VIDEO))
 	{
-		yane_verbose("VIDEO", "Setting mode to %ux%u @%u-bpp", width, height, bpp);
+		yane_verbose("VIDEO", "Setting mode to %ux%u", width, height);
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
 			yane_error("Call to SDL_Init failed.");
@@ -55,6 +55,8 @@ yane_video_init(int width, int height, int bpp, yane_bool fullscreen)
 	}
 	
 	flags = 0;
+	bpp = VIDEO_DEFAULT_BPP;
+
 	vi = SDL_GetVideoInfo();
 
 	if(vi == NULL)
@@ -73,8 +75,11 @@ yane_video_init(int width, int height, int bpp, yane_bool fullscreen)
 			flags |= SDL_SWSURFACE;
 		
 		vfmt = vi->vfmt;
+		
+		/* Use the best bits per pixel for this system */
+		bpp = vfmt->BitsPerPixel;
 		yane_verbose(SDL_VideoDriverName(namebuf, 128), 
-					"%u kb memory, %u bits per pixel", vi->video_mem, vfmt->BitsPerPixel);
+					"%u kb memory, %u bits per pixel", vi->video_mem, bpp);
 	}
 	
 	if(fullscreen)

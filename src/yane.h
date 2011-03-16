@@ -22,6 +22,7 @@
 #include "common.h"
 #include "cpu.h"
 #include "mem.h"
+#include "ppu.h"
 
 #ifdef FALSE
 # undef FALSE
@@ -39,8 +40,9 @@ typedef char yane_bool;
 
 extern yane_bool flag_verbose;
 
-int yane_video_init(int width, int height, int bpp, yane_bool fullscreen);
+int yane_video_init(int width, int height, yane_bool fullscreen);
 int yane_video_deinit();
 int yane_video_loop();
 
 #endif /* not __YANE_H__ */
+

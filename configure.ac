@@ -22,7 +22,7 @@ SDL_LDADD=`sdl-config --libs`
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LDADD)
 
-AC_CONFIG_FILES([Makefile img/Makefile src/Makefile src/common/Makefile src/nes/Makefile])
+AC_CONFIG_FILES([Makefile img/Makefile src/Makefile src/common/Makefile src/nes/Makefile src/lib6502/Makefile])
 AC_CONFIG_HEADERS([src/config.h])
 AC_OUTPUT
 
