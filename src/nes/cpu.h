@@ -13,6 +13,11 @@
 #define F_ZER 0x02
 #define F_CAR 0x00
 
+#define NMI_VECT   0xFFFA
+#define RESET_VECT 0xFFFC
+#define BRK_VECT   0xFFFE
+#define IRQ_VECT   0xFFFE
+
 typedef struct
 {
 	uint8_t a, x, y;

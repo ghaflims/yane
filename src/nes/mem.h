@@ -12,6 +12,7 @@ extern mem_write_func _write_callbacks[];
 
 #define mem_read(addr) _read_callbacks[addr](addr)
 #define mem_write(addr, val) _write_callbacks[addr](addr, val)
+#define mem_readw(addr) (_read_callbacks[addr](addr) | (_read_callbacks[addr+1](addr+1) << 8))
 
 #define mem_add_read_func(addr, func) _read_callbacks[addr] = func
 #define mem_add_write_func(addr, func) _write_callbacks[addr] = func

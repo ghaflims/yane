@@ -23,7 +23,7 @@
 #include "yane.h"
 
 const char *compiled_str = "compiled on " __DATE__ " at " __TIME__ ".";
-const char *shortopts = "hvW:H:";
+const char *shortopts = "hvW:H:PN";
 char *progname;
 char *filename;
 
