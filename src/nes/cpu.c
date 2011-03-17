@@ -35,11 +35,21 @@ extern uint8_t ram[0x800];
 /* Define CPU operations as macros for speed.
    The only tradeoff is an increase in generated code size,
    which may cause slowdown on systems with a small cache size */
-   
+
+/* Addressing modes */
+#define IMM {x.db = mem_read(x.pc); x.pc++;}
+#define ZP {x.dp = mem_read(x.pc); x.db = ram[x.dp]; x.pc++;}
+#define ZPX {x.dp = mem_read(x.pc) + x.x; x.db = ram[x.dp]; x.pc++;}
+#define ZPY {x.dp = mem_read(x.pc) + x.y; x.db = ram[x.dp]; x.pc++;}
+#define ABS {x.dw = mem_readw(x.pc); x.db = mem_read(x.dw); x.pc += 2;}
+#define ABS2 {x.dw = mem_readw(x.pc); x.pc += 2;}
+
+/* Addressing mode write-backs */
+#define WZP {ram[x.dp] = x.db;}
+#define WABS {ram[x.dw] = x.db;}
+
 /* Flag operations */
 #define SET_ZN(val) {x.p &= ~(F_NEG | F_ZER); x.p |= zn_table[(val)];}
-#define SET_CAR_ADD(val) {x.p &= ~F_CAR; if(val > 0xFF) x.p |= F_CAR;}
-#define SET_CAR_SUB(val) {x.p &= ~F_CAR; if((int16_t)val < 0) x.p |= F_CAR;}
 #define CLC() {x.p &= ~F_CAR; CYC(2);}
 #define SEC() {x.p |= F_CAR; CYC(2); }
 #define CLD() {x.p &= ~F_DEC; CYC(2);}
@@ -49,8 +59,8 @@ extern uint8_t ram[0x800];
 #define CLV() {x.p &= ~F_OVR; CYC(2);}
 
 /* Misc. operations */
-#define FETCH() mem_read(x.pc)
 #define CYC(amt) x.countdown -= (amt)
+#define FETCH() mem_read(x.pc)
 #define NOP() CYC(2)
 
 /* Stack operations */
@@ -68,8 +78,13 @@ extern uint8_t ram[0x800];
 /* Control transfer operations */
 #define RTS() {x.pc = POPW() + 1; CYC(6);}
 #define RTI() {x.p = POP(); x.pc = POPW(); CYC(6);}
+#define JMP() {x.pc = x.dw;}
+#define JSR() {x.dw = mem_readw(x.pc); ++x.pc; PUSHW(x.pc); x.pc = x.dw; CYC(6);}
 
 /* Data transfer operations */
+#define LDA() {x.a = x.db; SET_ZN(x.a);}
+#define LDX() {x.x = x.db; SET_ZN(x.x);}
+#define LDY() {x.y = x.db; SET_ZN(x.y);}
 #define TAX() {x.x = x.a; SET_ZN(x.x); CYC(2);}
 #define TXA() {x.a = x.x; SET_ZN(x.a); CYC(2);}
 #define DEX() {--x.x; SET_ZN(x.x); CYC(2);}
@@ -80,6 +95,16 @@ extern uint8_t ram[0x800];
 #define INY() {++x.y; SET_ZN(x.y); CYC(2);}
 
 /* ALU operations */
+#define AND() {x.a &= x.db; SET_ZN(x.a);}
+#define ASLA() {if(x.a & 0x80) x.p |= F_CAR; else x.p &= ~F_CAR; x.a <<=1; SET_ZN(x.a);}
+#define ASL() {if(x.db & 0x80) x.p |= F_CAR; else x.p &= ~F_CAR; x.db <<=1; SET_ZN(x.db);}
+#define BIT() {x.db &= x.a; SET_ZN(x.db); if(x.db & 0x40) x.p |= F_OVR; else x.p &= ~F_OVR;}
+#define DEC() {--x.db; SET_ZN(x.db);}
+#define EOR() {x.a ^= x.db; SET_ZN(x.a);}
+#define INC() {++x.db; SET_ZN(x.db);}
+#define LSRA() {if(x.a & 1) x.p |= F_CAR; else x.p &= ~F_CAR; x.a >>= 1; SET_ZN(x.a);}
+#define LSR() {if(x.db & 1) x.p |= F_CAR; else x.p &= ~F_CAR; x.db >>= 1; SET_ZN(x.db);}
+#define ORA() {x.a |= x.db; SET_ZN(x.a);}
 
 /* Setup internal data structures that may be used by the 6502 emulation */
 int
@@ -191,12 +216,36 @@ yane_cpu_run(int cycles)
 		switch(op)
 		{
 			case 0x00: yane_cpu_brk(); break;
+			case 0x05: ZP ORA(); CYC(2); break;
+			case 0x06: ZP ASL(); WZP; CYC(5); break;
 			case 0x08: PHP(); break;
+			case 0x09: IMM ORA(); CYC(2); break;
+			case 0x0A: ASLA(); CYC(2); break;
+			case 0x0D: ABS ORA(); CYC(4); break;
+			case 0x0E: ABS ASL(); WABS; CYC(6); break;
+			case 0x15: ZPX ORA(); CYC(3);
+			case 0x16: ZPX ASL(); WZP; CYC(6); break;
 			case 0x18: CLC(); break;
+			case 0x20: JSR(); break;
+			case 0x24: ZP BIT(); CYC(3); break;
+			case 0x25: ZP AND(); CYC(2); break;
 			case 0x28: PLP(); break;
+			case 0x29: IMM AND(); CYC(2); break;
+			case 0x2C: ABS BIT(); CYC(4); break;
+			case 0x2D: ABS AND(); CYC(4); break;
+			case 0x35: ZPX AND(); CYC(3); break;
 			case 0x38: SEC(); break;
 			case 0x40: RTI(); break;
+			case 0x45: ZP EOR(); CYC(3); break;
+			case 0x46: ZP LSR(); WZP; CYC(5); break;
 			case 0x48: PHA(); break;
+			case 0x49: IMM EOR(); CYC(2); break;
+			case 0x4A: LSRA(); CYC(2); break;
+			case 0x4C: ABS2 JMP(); CYC(3); break;
+			case 0x4D: ABS EOR(); CYC(4); break;
+			case 0x4E: ABS LSR(); WABS; CYC(6); break;
+			case 0x55: ZPX EOR(); CYC(4); break;
+			case 0x56: ZPX LSR(); WZP; CYC(6);
 			case 0x58: CLI(); break;
 			case 0x60: RTS(); break;
 			case 0x68: PLA(); break;
@@ -205,14 +254,32 @@ yane_cpu_run(int cycles)
 			case 0x8A: TXA(); break;
 			case 0x98: TYA(); break;
 			case 0x9A: TXS(); break;
+			case 0xA0: IMM LDY(); CYC(2); break;
+			case 0xA2: IMM LDX(); CYC(2); break;
+			case 0xA4: ZP LDY(); CYC(3); break;
+			case 0xA5: ZP LDA(); CYC(3); break;
+			case 0xA6: ZP LDX(); CYC(3); break;
 			case 0xA8: TAY(); break;
+			case 0xA9: IMM LDA(); CYC(2); break;
 			case 0xAA: TAX(); break;
+			case 0xAC: ABS LDY(); CYC(4); break;
+			case 0xAD: ABS LDA(); CYC(4); break;
+			case 0xAE: ABS LDX(); CYC(4); break;
+			case 0xB4: ZPX LDY(); CYC(4); break;
+			case 0xB5: ZPX LDA(); CYC(4); break;
+			case 0xB6: ZPY LDX(); CYC(4); break;
 			case 0xBA: TSX(); break;
+			case 0xC6: ZP DEC(); WZP; CYC(5); break;
 			case 0xC8: INY(); break;
 			case 0xCA: DEX(); break;
+			case 0xCE: ABS DEC(); WABS; CYC(6); break;
+			case 0xD6: ZPX DEC(); WZP; CYC(6); break;
 			case 0xD8: CLD(); break;
+			case 0xE6: ZP INC(); WZP; CYC(5); break;
 			case 0xE8: INX(); break;
 			case 0xEA: NOP(); break;
+			case 0xEE: ABS INC(); WABS; CYC(6); break;
+			case 0xF6: ZPX INC(); WZP; CYC(6); break;
 			case 0xF8: SED(); break;
 			
 			/* Invalid/unimplemented opcode */

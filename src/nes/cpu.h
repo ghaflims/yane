@@ -20,19 +20,20 @@
 
 typedef struct
 {
-	uint8_t a, x, y;
-	uint8_t s, p;
-	uint16_t pc;
-	/* When a 16-bit value is loaded,
-		the processor keeps the low byte
-		in this register
-	 */
-	uint8_t dbtmp;
+	int countdown;
 	/* Store interrupt vectors here
 		to keep from having to read them
 		whenever an interrupt is asserted */
 	uint16_t nmi_vector, irq_vector, reset_vector;
-	int countdown;
+	/* Holds a temporary word value/memory address */
+	uint16_t dw;
+	uint8_t a, x, y;
+	uint8_t s, p;
+	uint16_t pc;
+	/* Holds a temporary byte value */
+	uint8_t db;
+	/* Hold a temporary zero page address */
+	uint8_t dp;
 } x6502;
 
 int yane_cpu_init();
