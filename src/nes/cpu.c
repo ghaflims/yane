@@ -131,7 +131,7 @@ yane_cpu_init()
 }
 
 /* Simulate assertion of the CPU's RES pin */
-int
+void
 yane_cpu_power()
 {
 	yane_verbose("CPU", "Powered on");
@@ -141,10 +141,10 @@ yane_cpu_power()
 	x.s = 0xFF;
 	CYC(6);
 	
-	return yane_cpu_reset();
+	yane_cpu_reset();
 }
 
-int
+void
 yane_cpu_reset()
 {
 	yane_verbose("CPU", "Reset");
@@ -152,7 +152,7 @@ yane_cpu_reset()
 	x.p |= F_CLI;
 	x.s -= 2;		/* Hopefully nothing depends on this */
 	x.pc = mem_readw(RESET_VECT);
-	return 0;
+
 }
 
 /* Software interrupt */

@@ -121,6 +121,18 @@ main(int argc, char **argv)
 		return -1;
 	}
 	
+	if(yane_ppu_init() < 0)
+	{
+		yane_error("failed to initialize PPU");
+		return -1;
+	}
+	
+	if(yane_ines_load(filename) < 0)
+	{
+		yane_error("failed to load ROM");
+		return -1;
+	}
+	
 	if(yane_video_init(width, height, flag_fullscreen) < 0)
 	{
 		yane_error("failed to initialize video");
@@ -138,6 +150,7 @@ main(int argc, char **argv)
 			break;
 	}
 	
+	yane_ines_unload();
 	
 	/* Deinitialization */
 	yane_video_deinit();

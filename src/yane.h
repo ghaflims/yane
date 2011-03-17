@@ -23,6 +23,7 @@
 #include "cpu.h"
 #include "mem.h"
 #include "ppu.h"
+#include "ines.h"
 
 #ifdef FALSE
 # undef FALSE

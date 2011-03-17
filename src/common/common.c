@@ -45,3 +45,18 @@ yane_verbose(const char *subsyst, const char *fmt, ...)
 	return 0;
 }
 
+FILE *
+yane_fopen(const char *fname, const char *mode)
+{
+	FILE *f;
+	
+	f = fopen(fname, mode);
+	if(f == NULL)
+	{
+		yane_error("failed to open file");
+		abort();
+	}
+	
+	return f;
+}
+

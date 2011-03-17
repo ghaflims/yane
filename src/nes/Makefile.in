@@ -47,7 +47,7 @@ CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libnes_la_LIBADD =
 am_libnes_la_OBJECTS = libnes_la-cpu.lo libnes_la-mem.lo \
-	libnes_la-ppu.lo
+	libnes_la-ppu.lo libnes_la-ines.lo
 libnes_la_OBJECTS = $(am_libnes_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src
 depcomp = $(SHELL) $(top_srcdir)/buildaux/depcomp
@@ -181,7 +181,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LTLIBRARIES = libnes.la
-libnes_la_SOURCES = cpu.h cpu.c mem.h mem.c ppu.h ppu.c
+libnes_la_SOURCES = cpu.h cpu.c mem.h mem.c ppu.h ppu.c ines.h ines.c
 libnes_la_CPPFLAGS = -Wall -I../ -I../common
 all: all-am
 
@@ -236,6 +236,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnes_la-cpu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnes_la-ines.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnes_la-mem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnes_la-ppu.Plo@am__quote@
 
@@ -280,6 +281,13 @@ libnes_la-ppu.lo: ppu.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ppu.c' object='libnes_la-ppu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnes_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libnes_la-ppu.lo `test -f 'ppu.c' || echo '$(srcdir)/'`ppu.c
+
+libnes_la-ines.lo: ines.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnes_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libnes_la-ines.lo -MD -MP -MF $(DEPDIR)/libnes_la-ines.Tpo -c -o libnes_la-ines.lo `test -f 'ines.c' || echo '$(srcdir)/'`ines.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libnes_la-ines.Tpo $(DEPDIR)/libnes_la-ines.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ines.c' object='libnes_la-ines.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnes_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libnes_la-ines.lo `test -f 'ines.c' || echo '$(srcdir)/'`ines.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

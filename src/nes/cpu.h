@@ -37,8 +37,8 @@ typedef struct
 } x6502;
 
 int yane_cpu_init();
-int yane_cpu_power();
-int yane_cpu_reset();
+void yane_cpu_power();
+void yane_cpu_reset();
 
 #endif /* not __6502_CPU_H__ */
 

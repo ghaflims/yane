@@ -12,6 +12,7 @@
 void *yane_malloc(size_t amt);
 void yane_free(void *ptr);
 int yane_verbose(const char *subsyst, const char *fmt, ...);
+FILE *yane_fopen(const char *fname, const char *mode);
 
 #endif /* not __YANE_COMMON_H__ */
 

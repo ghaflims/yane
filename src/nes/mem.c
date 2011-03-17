@@ -3,10 +3,17 @@
 mem_read_func _read_callbacks[65536];
 mem_write_func _write_callbacks[65536];
 
-/* RAM is global because the CPU optimizes zero page
-   accesses by going to it directly, with no need to
+/* RAM is global because the CPU emulation optimizes zero page
+   and stack accesses by going to it directly, with no need to
    call the callback function */
 uint8_t ram[0x800];
+
+/* Use an array of pointers to PRG and CHR ROM banks 
+	in order to simplify bank-switching */
+prg_bank_t **prg_rom;
+chr_bank_t **chr_rom;
+unsigned int num_prg_banks;
+unsigned int num_chr_banks;
 
 /* null callback read and writes; basically, do nothing */
 RDECL(null)
@@ -64,6 +71,10 @@ int
 yane_mem_init()
 {
 	unsigned int i;
+	
+	/* These are set up by the ROM file loader */
+	prg_rom = NULL; chr_rom = NULL;
+	num_prg_banks = num_chr_banks = 0;
 	
 	/* Fill RAM read and write callbacks */
 	for(i = 0x0000; i < 0x800; i++)

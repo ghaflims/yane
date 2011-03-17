@@ -83,7 +83,10 @@ yane_video_init(int width, int height, yane_bool fullscreen)
 	}
 	
 	if(fullscreen)
+	{
+		yane_verbose("VIDEO", "Going fullscreen");
 		flags |= SDL_FULLSCREEN;
+	}
 	
 	screen = SDL_SetVideoMode(width, height, bpp, flags);
 	if(screen == NULL)
